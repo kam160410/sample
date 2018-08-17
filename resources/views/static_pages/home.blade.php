@@ -1,12 +1,22 @@
+
+
+
+
 @extends('layouts.default')
+
 @section('title',$title)
 
 @section('content')
- <div class="flex-center position-ref full-height">
-            <div class="content">
-                <div class="title m-b-md">
-                   {{$title}}
-                </div>
-            </div>
-</div>
+  <div class="jumbotron">
+    <h1>Sample App</h1>
+    <p class="lead">
+       Believe in yourself
+    </p>
+    <p>
+      一切，将从这里开始。
+    </p>
+    <p>
+      <a class="btn btn-lg btn-success" href="{{ route('signup') }}" role="button">现在注册</a>
+    </p>
+  </div>
 @stop

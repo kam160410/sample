@@ -9,7 +9,7 @@
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
-
+        <link rel="stylesheet" href="{{asset('/css/app.css')}}">
         <!-- Styles -->
         <style>
             html, body {
@@ -65,6 +65,14 @@
         </style>
     </head>
     <body>
+        <div class="flex-center position-ref full-height">
+            <div class="content">
+                <div class="title m-b-md">
+                   sample App
+                </div>
+                <a href="{{ route('home') }}" class="btn btn-primary btn-lg" role="button">进入 ></a>
+            </div>
 
+        </div>
     </body>
 </html>
