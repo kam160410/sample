@@ -8,6 +8,7 @@
 <body>
     @include('layouts/_header')
     <div class="container">
+      @include('shared._msg')
       @yield('content')
       @include('layouts/_footer')
     </div>
