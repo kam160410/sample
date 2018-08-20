@@ -27,6 +27,7 @@ class UsersController extends Controller
     public function show(User $user)
     {
     	$title = "用户信息";
+    	echo 1111;
     	return view('users.show',compact('user','title'));
     }
 
