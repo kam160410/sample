@@ -27,10 +27,14 @@ class UsersController extends Controller
     public function show(User $user)
     {
     	$title = "用户信息";
-    	echo 1111;
     	return view('users.show',compact('user','title'));
     }
 
+    /**
+     * [store description]用户注册界面
+     * @param Request $request [description]
+     * @return [type] [description]
+     */
     public function store(Request $request)
     {
     	$this->validate($request,[
