@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
@@ -31,7 +32,7 @@ class UsersController extends Controller
     }
 
     /**
-     * [store description]用户注册界面
+     * [store description]用户注册界面git a
      * @param Request $request [description]
      * @return [type] [description]
      */
@@ -48,6 +49,7 @@ class UsersController extends Controller
     		'email' =>  $request->email,
     		'password' => bcrypt($request->password)
     	]);
+    	Auth::login($user);
     	session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
     	return redirect()->route('users.show',[$user]);
     }
