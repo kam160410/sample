@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Auth;
 class SessionsController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('guest',[
+            'only' => ['create']
+        ]);
+    }
+
+
 	/**
 	 * 用户登录
 	 * @return [type] [description]
@@ -18,6 +26,9 @@ class SessionsController extends Controller
     	return view('sessions.create',compact('title'));
     }
 
+    /**
+     * 提交登录页
+     */
     public function store(Request $request)
     {
     	 $credentials = $this->validate($request, [
@@ -27,10 +38,10 @@ class SessionsController extends Controller
 
     	 if( Auth::attempt($credentials,$request->has('remember'))){
             session()->flash('success','欢迎回来!');
-            return redirect()->route('users.show',[Auth::user()]);
+            return redirect()->intended( route('users.show',[Auth::user()]) );
     	 }else{
             session()->flash('danger','很抱歉，您的邮箱和密码不匹配');
-            return redirect()->back();
+            return redirect()->back()->withInput();
     	 }
 
     }

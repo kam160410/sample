@@ -6,13 +6,35 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Access\AuthorizationException;
+
 
 class UsersController extends Controller
 {
 
+    public function __construct()
+    {
+
+        $this->middleware('auth',[
+            'except'  => ['create','store']
+        ]);
+
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
+    /**
+     * 用户中心展示页
+     */
+    public function index()
+    {
+        $users = User::paginate(10);
+        return view('users.index',compact('users'));
+    }
+
 	/**
-	 * [create description]
-	 * @return [type] [description]
+	 * 用户注册页面展示
 	 */
     public function create()
     {
@@ -21,20 +43,17 @@ class UsersController extends Controller
     }
 
     /**
-     * [show description]
-     * @param User $user [description]
-     * @return [type] [description]
+     * 用户信息展示
      */
     public function show(User $user)
     {
     	$title = "用户信息";
+    	$this->authorize('update',$user);
     	return view('users.show',compact('user','title'));
     }
 
     /**
-     * [store description]用户注册界面git a
-     * @param Request $request [description]
-     * @return [type] [description]
+     * 用户注册提交
      */
     public function store(Request $request)
     {
@@ -54,4 +73,56 @@ class UsersController extends Controller
     	return redirect()->route('users.show',[$user]);
     }
 
+    /**
+     * 编辑用户展示页
+     */
+    public function edit(User $user)
+    {
+        try {
+            $this->authorize('update', $user);
+        } catch (AuthorizationException $authorizationException) {
+            //session()->flash('warning','对不起，你无权访问此页面！');
+            return redirect()->back();
+            //return abort(403, '对不起，你无权访问此页面！');
+        }
+        $title = "编辑用户";
+        return view('users.edit',compact('title','user'));
+    }
+
+    /**
+     * 更新用户信息
+     */
+    public function update(User $user ,Request $request)
+    {
+            $this->validate($request,[
+                'name' => 'required|max:50',
+                'password' => 'required|min:6|confirmed'
+            ]);
+
+            try {
+                $this->authorize('update', $user);
+            } catch (AuthorizationException $authorizationException) {
+                //session()->flash('warning','对不起，你无权访问此页面！');
+                return redirect()->back();
+                //return abort(403, '对不起，你无权访问此页面！');
+            }
+
+            $user->update([
+                'name' => $request->name,
+                'password' =>bcrypt($request->password)
+            ]);
+            session()->flash('success',"更新个人信息成功!");
+            return redirect()->route('users.show',$user->id);
+    }
+
+    /**
+     * 删除用户
+     */
+    public function destroy(User $user)
+    {
+        $this->authorize('destroy',$user);
+        $user->delete();
+        session()->flash('success','删除成功!');
+        return redirect()->back();
+    }
  }
