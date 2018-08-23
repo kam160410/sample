@@ -7,7 +7,7 @@ use App\Http\Requests;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\AuthorizationException;
-
+use Mail;
 
 class UsersController extends Controller
 {
@@ -16,7 +16,7 @@ class UsersController extends Controller
     {
 
         $this->middleware('auth',[
-            'except'  => ['create','store']
+            'except'  => ['show','create','store','confirmEmail']
         ]);
 
         $this->middleware('guest', [
@@ -48,7 +48,7 @@ class UsersController extends Controller
     public function show(User $user)
     {
     	$title = "用户信息";
-    	$this->authorize('update',$user);
+    	//$this->authorize('update',$user);
     	return view('users.show',compact('user','title'));
     }
 
@@ -68,9 +68,15 @@ class UsersController extends Controller
     		'email' =>  $request->email,
     		'password' => bcrypt($request->password)
     	]);
-    	Auth::login($user);
-    	session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
-    	return redirect()->route('users.show',[$user]);
+
+    	//邮箱注册
+        $this->sendEmailConfirmationTo($user);
+        session()->flash('success', '验证邮件已发送到你的注册邮箱上，请注意查收。');
+        return redirect('/home');
+
+//    	Auth::login($user);
+//    	session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
+//    	return redirect()->route('users.show',[$user]);
     }
 
     /**
@@ -125,4 +131,35 @@ class UsersController extends Controller
         session()->flash('success','删除成功!');
         return redirect()->back();
     }
+
+    /**
+     * 用户注册验证
+     */
+    public function confirmEmail($token)
+    {
+        $user = User::where('activation_token',$token)->firstOrFail();
+
+        $user->activated = true;
+        $user->activation_token = null;
+        $user->save();
+
+        session()->flash('success','恭喜你，激活成功！');
+        return redirect()->route('users.show',[$user]);
+    }
+
+    public function sendEmailConfirmationTo($user)
+    {
+        $view = "users.confirm";
+        $data = compact('user');
+        $from = 'kam160410@163.com';
+        $name = 'sample_admin';
+        $to   = $user->email;
+        $subject = "感谢注册 Sample 应用！请确认你的邮箱。";
+
+        Mail::send($view,$data,function($message) use ($from,$name,$to,$subject){
+            $message->from($from,$name)->to($to)->subject($subject);
+        });
+    }
+
+
  }
