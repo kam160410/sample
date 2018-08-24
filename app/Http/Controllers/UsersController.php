@@ -68,7 +68,7 @@ class UsersController extends Controller
     		'email' =>  $request->email,
     		'password' => bcrypt($request->password)
     	]);
-    	dd($user);
+    	//dd($user);
     	//邮箱注册
         $this->sendEmailConfirmationTo($user);
         session()->flash('success', '验证邮件已发送到你的注册邮箱上，请注意查收。');
@@ -160,4 +160,5 @@ class UsersController extends Controller
     }
 
 
- }
+
+}
