@@ -72,7 +72,7 @@ class UsersController extends Controller
     	//邮箱注册
         $this->sendEmailConfirmationTo($user);
         session()->flash('success', '验证邮件已发送到你的注册邮箱上，请注意查收。');
-        return redirect('/home');
+        return redirect()->route('home');
 
 //    	Auth::login($user);
 //    	session()->flash('success', '欢迎，您将在这里开启一段新的旅程~');
@@ -154,7 +154,7 @@ class UsersController extends Controller
         $to   = $user->email;
         $subject = "感谢注册 Sample 应用！请确认你的邮箱。";
 
-        Mail::send($view,$data,function($message) use (/*$from,$name,*/$to,$subject){
+        Mail::send($view,$data,function($message) use ($to,$subject){
             $message->to($to)->subject($subject);
         });
     }
