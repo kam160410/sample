@@ -151,13 +151,13 @@ class UsersController extends Controller
     {
         $view = "users.confirm";
         $data = compact('user');
-        $from = 'kam160410@163.com';
-        $name = 'sample_admin';
+//        $from = 'kam160410@163.com';
+//        $name = 'sample_admin';
         $to   = $user->email;
         $subject = "感谢注册 Sample 应用！请确认你的邮箱。";
 
-        Mail::send($view,$data,function($message) use ($from,$name,$to,$subject){
-            $message->from($from,$name)->to($to)->subject($subject);
+        Mail::send($view,$data,function($message) use (/*$from,$name,*/$to,$subject){
+            $message/*->from($from,$name)*/->to($to)->subject($subject);
         });
     }
 

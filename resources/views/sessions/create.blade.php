@@ -31,7 +31,10 @@
 
       <hr>
 
-      <p>还没账号？<a href="{{ route('signup') }}">现在注册！</a></p>
+        <p>
+            <span class="col-xs-6">还没账号？<a href="{{ route('signup') }}">现在注册！</a></span>
+            <span  class="col-xs-6 text-right"><a href="{{ route('password.request') }}">忘记密码</a></span>
+        </p>
     </div>
   </div>
 </div>
