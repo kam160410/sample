@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword;
+use PhpParser\Node\Stmt\Return_;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -18,10 +20,48 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    //是否已经关注
+    public function isFollowing($user_id)
+    {
+        return $this->followings->contains($user_id);
+    }
+
+    //关注
+    public  function follow($user_ids)
+    {
+        if(!is_array($user_ids)){
+            $user_id = compact('user_ids');
+        }
+        return $this->followings()->sync($user_ids,false);
+    }
+
+    //取消关注
+    public function unfollow($user_ids)
+    {
+        if(!is_array($user_ids)){
+            $user_ids = compact('user_ids');
+        }
+        return $this->followings()->detach($user_ids);
+    }
+
+    //获取粉丝  (多对一)
+    public  function followers()
+    {
+        return $this->belongsToMany(User::Class,'followers','user_id','follower_id');
+    }
+
+    //获取关注人(自己关注别人)  一对多
+    public function followings()
+    {
+        return $this->belongsToMany(User::Class,'followers','follower_id','user_id');
+    }
+
 
     public function feed()
     {
-        return $this->statuses()->orderBy('created_at','desc');
+        $user_ids = Auth::user()->followings->pluck('id')->toArray();
+        array_push($user_ids,Auth::user()->id);
+        return Status::whereIn('user_id',$user_ids)->with('user')->orderBy('created_at','desc');
     }
 
     public  function statuses()

@@ -16,13 +16,34 @@ class UsersController extends Controller
     {
 
         $this->middleware('auth',[
-            'except'  => ['show','create','store','confirmEmail']
+            'except'  => ['create','store','confirmEmail']
         ]);
 
         $this->middleware('guest', [
             'only' => ['create']
         ]);
     }
+
+    /**
+     * 粉丝
+     */
+    public function followers(User $user)
+    {
+        $users = $user->followers()->paginate(30);
+        $title = "我的粉丝";
+        return view('users.show_follow',compact('title','users'));
+    }
+
+    /**
+     * 关注的人
+     */
+    public function followings(User $user)
+    {
+        $users = $user->followings()->paginate(30);
+        $title = "我的关注";
+        return view('users.show_follow',compact('title','users'));
+    }
+
 
     /**
      * 用户中心展示页
