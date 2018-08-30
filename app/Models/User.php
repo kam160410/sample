@@ -19,6 +19,17 @@ class User extends Authenticatable
     ];
 
 
+    public function feed()
+    {
+        return $this->statuses()->orderBy('created_at','desc');
+    }
+
+    public  function statuses()
+    {
+        return $this->hasMany(Status::class);
+    }
+
+
     /**
      * 生成动态令牌
      * @param string $size
